@@ -1,0 +1,31 @@
+Arguments: 
+  /usr/bin/node /home/serban/.yarn/bin/yarn.js start
+
+PATH: 
+  /home/serban/.yarn/bin:/home/serban/.config/yarn/global/node_modules/.bin:/home/serban/.local/share/umake/bin:/home/serban/.local/bin:/home/serban/.yarn/bin:/home/serban/.config/yarn/global/node_modules/.bin:/home/serban/.local/share/umake/bin:/home/serban/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+
+Yarn version: 
+  1.19.1
+
+Node version: 
+  10.17.0
+
+Platform: 
+  linux x64
+
+Trace: 
+  SyntaxError: /home/serban/Consumption-Prediction/package.json: Unexpected end of JSON input
+      at JSON.parse (<anonymous>)
+      at /home/serban/.yarn/lib/cli.js:1625:59
+      at Generator.next (<anonymous>)
+      at step (/home/serban/.yarn/lib/cli.js:304:30)
+      at /home/serban/.yarn/lib/cli.js:315:13
+
+npm manifest: 
+  
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
