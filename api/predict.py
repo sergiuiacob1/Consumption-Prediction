@@ -17,7 +17,9 @@ class Prediction(Resource):
         X = X.reshape(1, -1)
         prediction = self.get_prediction(X)
         print (f'Prediction for {X} is {prediction}')
-        return {'Prediction: ': str(prediction)}
+        response = {'success': True,
+                    'prediction': prediction'}
+        return json.dumps(response)
 
     def get_prediction(self, X):
         file_path = os.path.join(os.getcwd(), 'trained_models', 'model.pkl')

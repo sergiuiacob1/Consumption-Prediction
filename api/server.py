@@ -8,7 +8,7 @@ from predict import Prediction
 
 
 class Server:
-    port = 8080
+    port = 3001
 
     def __init__(self):
         self.app = Flask(__name__)

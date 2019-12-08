@@ -5,6 +5,7 @@ from sklearn.neural_network import MLPClassifier
 import joblib
 import os
 import utils as Utils
+import json
 
 
 class Trainer(Resource):
@@ -17,7 +18,9 @@ class Trainer(Resource):
         kwargs = self.parser.parse_args()
         t = threading.Thread(target=self.train, kwargs=kwargs)
         t.start()
-        return {'Training model with: ': str(kwargs)}
+        response = {'success': True,
+                    'message': f'Training model with: {kwargs}'}
+        return json.dumps(response)
 
     def train(self, learning_rate=0.5, **kwargs):
         print(f'Training new model with eta: {kwargs}')
@@ -25,8 +28,8 @@ class Trainer(Resource):
         data = pd.read_csv('./../data/train_electricity.csv')
 
         model = MLPClassifier(hidden_layer_sizes=(36), max_iter=5)
-        X = data[Utils.X_columns][:25000]
-        y = data[Utils.y_column][:25000]
+        X = data[Utils.X_columns][:5000]
+        y = data[Utils.y_column][:5000]
         print('Training model...')
         model.fit(X, y)
         self.save_trained_model(model)
