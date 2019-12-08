@@ -1,11 +1,11 @@
 from flask_restful import Resource, reqparse
+from flask import json
 import threading
 import pandas as pd
 from sklearn.neural_network import MLPClassifier
 import joblib
 import os
 import utils as Utils
-import json
 
 
 class Trainer(Resource):
@@ -18,9 +18,10 @@ class Trainer(Resource):
         kwargs = self.parser.parse_args()
         t = threading.Thread(target=self.train, kwargs=kwargs)
         t.start()
-        response = {'success': True,
-                    'message': f'Training model with: {kwargs}'}
-        return json.dumps(response)
+        data = {'success': True,
+                'message': f'Training model with: {kwargs}'}
+        response = Utils.build_json_response(data, 200)
+        return response
 
     def train(self, learning_rate=0.5, **kwargs):
         print(f'Training new model with eta: {kwargs}')
