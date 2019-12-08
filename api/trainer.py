@@ -25,8 +25,8 @@ class Trainer(Resource):
         data = pd.read_csv('./../data/train_electricity.csv')
 
         model = MLPClassifier(hidden_layer_sizes=(36), max_iter=5)
-        X = data[Utils.X_columns]
-        y = data[Utils.y_column]
+        X = data[Utils.X_columns][:25000]
+        y = data[Utils.y_column][:25000]
         print('Training model...')
         model.fit(X, y)
         self.save_trained_model(model)
