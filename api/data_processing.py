@@ -1,6 +1,7 @@
 import pandas as pd
 import config
 from sklearn import preprocessing
+from utils import X_columns
 
 def process_data(file_path):
     returnData = []
@@ -8,8 +9,8 @@ def process_data(file_path):
         inputData = pd.read_csv(file_path)
         inputData.drop(axis=1, columns="Date", inplace=True)
         min_max_scaler = preprocessing.MinMaxScaler()
-        transformedData = min_max_scaler.fit_transform(inputData)
-        returnData = pd.DataFrame(data=transformedData, columns=inputData.columns)
+        inputData[X_columns] = min_max_scaler.fit_transform(inputData[X_columns])
+        return inputData
     return returnData
 
 def get_test_data():
