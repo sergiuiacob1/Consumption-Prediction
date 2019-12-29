@@ -2,19 +2,29 @@ from flask_restful import Resource, reqparse
 from flask import json
 import threading
 import pandas as pd
-from sklearn.neural_network import MLPClassifier
+from sklearn.neural_network import MLPRegressor
 import joblib
 import os
 import utils as Utils
 from data_processing import get_data
 from config import trained_models_dir_path
 
-no_of_running_threads_lock = threading.Lock()
-no_of_running_threads = 0
+
+def get_last_model_number():
+    path = os.path.join(os.getcwd(), trained_models_dir_path)
+    files = os.listdir(path)
+    numbers = [int(x.split('_')[1].split('.pkl')[0]) for x in files]
+    return max(numbers)
+
+
+last_model_number = get_last_model_number()
+last_model_number_lock = threading.Lock()
+
 
 class Trainer(Resource):
     allowed_train_parameters = {
-        "learning_rate": float,
+        "learning_rate": str,
+        "learning_rate_init": float,
         "max_iter": int,
     }
 
@@ -37,7 +47,7 @@ class Trainer(Resource):
         print('Loading data...')
         data = get_data()
 
-        model = MLPClassifier(hidden_layer_sizes=(
+        model = MLPRegressor(hidden_layer_sizes=(
             36), **train_parameters, verbose=True)
         X = data[Utils.X_columns][:10000]
         y = data[Utils.y_column][:10000]
@@ -62,17 +72,14 @@ class Trainer(Resource):
         print(f'Model saved as {model_name}')
 
     def get_next_model_name(self):
-        # TODO
-        # vad care e ultimul model
-        absolute_trained_models_dir_path = os.path.abspath(
-            os.path.join(os.getcwd(), trained_models_dir_path))
-        no_of_existing_models = len(
-            os.listdir(absolute_trained_models_dir_path))
+        global last_model_number, last_model_number_lock
+        last_model_number_lock.acquire()
 
-        # mai am si thread-uri care ruleaza in fundal
-        # daca ultimul model e model_10 si am 2 threaduri care ruleaza
-        # atunci de fapt ultimul model ar fi model_12, deci urmatorul va fi model_13
-        return f'model_{no_of_existing_models + no_of_running_threads + 1}.pkl'
+        last_model_number += 1
+        model_name = f'model_{last_model_number}.pkl'
+
+        last_model_number_lock.release()
+        return model_name
 
 
 if __name__ == '__main__':
