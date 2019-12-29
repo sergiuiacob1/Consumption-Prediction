@@ -9,6 +9,8 @@ import utils as Utils
 from data_processing import get_data
 from config import trained_models_dir_path
 
+no_of_running_threads_lock = threading.Lock()
+no_of_running_threads = 0
 
 class Trainer(Resource):
     allowed_train_parameters = {
@@ -60,12 +62,17 @@ class Trainer(Resource):
         print(f'Model saved as {model_name}')
 
     def get_next_model_name(self):
-        # vad cate modele am so far
+        # TODO
+        # vad care e ultimul model
         absolute_trained_models_dir_path = os.path.abspath(
             os.path.join(os.getcwd(), trained_models_dir_path))
         no_of_existing_models = len(
             os.listdir(absolute_trained_models_dir_path))
-        return f'model_{no_of_existing_models + 1}.pkl'
+
+        # mai am si thread-uri care ruleaza in fundal
+        # daca ultimul model e model_10 si am 2 threaduri care ruleaza
+        # atunci de fapt ultimul model ar fi model_12, deci urmatorul va fi model_13
+        return f'model_{no_of_existing_models + no_of_running_threads + 1}.pkl'
 
 
 if __name__ == '__main__':
