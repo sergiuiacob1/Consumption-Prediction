@@ -19,8 +19,7 @@ class Prediction(Resource):
         X = X.reshape(1, -1)
         prediction = self.get_prediction(X)
         print(f'Prediction for {X} is {prediction}')
-        data = {'prediction': prediction}
-        return Utils.build_json_response(data)
+        return Utils.build_json_response(prediction)
 
     def get_prediction(self, X):
         file_path = os.path.join(os.getcwd(), 'trained_models', 'model.pkl')
