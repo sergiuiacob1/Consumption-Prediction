@@ -1,5 +1,9 @@
 import React from 'react';
-import logo from './logo.svg';
+import { Route, Switch, BrowserRouter } from 'react-router-dom';
+import Statistics from './containers/Statistics/Statistics.js';
+import Model from './containers/Model/Model.js';
+import Predict from './containers/Predict/Predict.js';
+import NotFoundPage from './containers/NotFoundPage/index.js';
 import './App.css';
 
 class App extends React.Component {
@@ -19,17 +23,17 @@ class App extends React.Component {
   }
   
   render() {
-    const { data } = this.state
 
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            {data && data.message}
-          </p>
-        </header>
-      </div>
+      <BrowserRouter history="">
+        <Switch>
+          <Route exact path="/" component={Statistics}/>
+          <Route exact path="/statistics" component={Statistics}/>
+          <Route exact path="/Model" component={Model}/>
+          <Route exact path="/predict" component={Predict}/>
+          <Route path="" component={NotFoundPage} />
+        </Switch>
+      </BrowserRouter>
     );
   }
 }
