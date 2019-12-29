@@ -6,6 +6,7 @@ from sklearn.neural_network import MLPClassifier
 import joblib
 import os
 import utils as Utils
+# from data_processing import get_data
 
 
 class Trainer(Resource):
@@ -26,7 +27,8 @@ class Trainer(Resource):
     def train(self, learning_rate=0.5, **kwargs):
         print(f'Training new model with eta: {kwargs}')
         print('Loading data...')
-        data = pd.read_csv('./../data/train_electricity.csv')
+        # data = get_data()
+        data = None
 
         model = MLPClassifier(hidden_layer_sizes=(36), max_iter=5)
         X = data[Utils.X_columns][:5000]
