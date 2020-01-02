@@ -1,5 +1,5 @@
 import React from 'react';
-import Layout from '../../components/Layout';
+import { Container, Row, Col } from 'react-bootstrap';
 
 export default class Model extends React.Component {
   constructor() {
@@ -7,11 +7,16 @@ export default class Model extends React.Component {
     this.state = {
     };
   }
+  
   render() {
-      return (
-        <Layout>
-          <div>Model</div>
-        </Layout>
-      )
+    return (
+      <Container>
+        <Row>
+          <Col>
+            <div>IN</div>
+          </Col>
+        </Row>
+      </Container>
+    );
   }
 }

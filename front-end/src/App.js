@@ -1,35 +1,26 @@
 import React from 'react';
 import { Route, Switch, BrowserRouter } from 'react-router-dom';
 import Statistics from './containers/Statistics/Statistics.js';
-import Model from './containers/Model/Model.js';
-import Predict from './containers/Predict/Predict.js';
-import NotFoundPage from './containers/NotFoundPage/index.js';
-import './App.css';
+import Navigation from './components/Navigation'
+import Model from './containers/Model';
+import Predict from './containers/Predict';
+import NotFoundPage from './containers/NotFoundPage';
+import './App.scss';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      data: null,
-    };
-  }
-
-  componentDidMount() {
-    fetch('/train', {
-      method: 'POST'
-    })
-      .then(res => res.json())
-      .then(data => this.setState({data}))
+    this.state = {};
   }
   
   render() {
-
     return (
       <BrowserRouter history="">
+        <Route component={Navigation}/>
         <Switch>
           <Route exact path="/" component={Statistics}/>
           <Route exact path="/statistics" component={Statistics}/>
-          <Route exact path="/Model" component={Model}/>
+          <Route exact path="/model" component={Model}/>
           <Route exact path="/predict" component={Predict}/>
           <Route path="" component={NotFoundPage} />
         </Switch>

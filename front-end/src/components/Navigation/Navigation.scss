@@ -1,0 +1,38 @@
+.nav {
+  .nav-item {
+    .nav-link {
+      display: flex;
+      height: 66px;
+      align-items: center;
+      justify-content: center;
+
+      &.active {
+        background-color: #0056b3;
+        color: white;
+
+        & > a {
+          color: white;
+        }
+      }
+
+      & > a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        color: #0056b3;
+        text-decoration: none;
+      }
+
+      &:hover {
+        background-color: #0057b36e;
+        color: white;
+
+        & > a {
+          color: white;
+        }
+      }
+    }
+  }
+}

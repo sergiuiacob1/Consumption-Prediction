@@ -1,5 +1,5 @@
 import React from 'react';
-import Layout from '../../components/Layout';
+import { Container, Row, Col } from 'react-bootstrap';
 
 export default class Statistics extends React.Component {
   constructor() {
@@ -7,11 +7,16 @@ export default class Statistics extends React.Component {
     this.state = {
     };
   }
+  
   render() {
-      return (
-        <Layout>
-          <div>Statistics</div>
-        </Layout>
-      )
+    return (
+      <Container>
+        <Row>
+          <Col>
+            <div>PULA</div>
+          </Col>
+        </Row>
+      </Container>
+    );
   }
 }

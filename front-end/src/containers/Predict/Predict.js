@@ -1,16 +1,22 @@
 import React from 'react';
-import Layout from '../../components/Layout';
+import { Container, Row, Col } from 'react-bootstrap';
+
 export default class Predict extends React.Component {
   constructor() {
     super();
     this.state = {
     };
   }
+  
   render() {
-      return (
-        <Layout>
-          <div>Predict</div>
-        </Layout>
-      )
+    return (
+      <Container>
+        <Row>
+          <Col>
+            <div>CUR</div>
+          </Col>
+        </Row>
+      </Container>
+    );
   }
 }

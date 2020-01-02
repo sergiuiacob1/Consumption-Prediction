@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import './style.scss';
+import './NotFoundPage.scss';
 
 export default function NotFound() {
   return (
