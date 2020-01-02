@@ -9,6 +9,19 @@ export default class Predict extends React.Component {
     super();
     this.state = {
       isPending: false,
+      formData: {
+        "Date": [],
+        "Coal_MW": [],
+        "Gas_MW": [],
+        "Hidroelectric_MW": [],
+        "Nuclear_MW": [],
+        "Wind_MW": [],
+        "Solar_MW": [],
+        "Biomass_MW": [],
+        "Production_MW": [],
+      },
+      fillFormData: false,
+      noOfFormData: 1,
       predictions: []
     };
   }
@@ -59,9 +72,78 @@ export default class Predict extends React.Component {
     reader.readAsText(evt.target.files[0]);
   };
 
+  onFormInputChange = (evt, key, index) => {
+    const _state = this.state;
+    _state.formData[key][index] = evt.target.value;
+    this.setState(_state);
+  }
+
+  changeRowNumbers = (noOfFormData) => {
+    this.setState({ noOfFormData });
+  }
+
+
+  renderForm = () => {
+    const { formData, noOfFormData, fillFormData } = this.state;
+    return (
+      <div className="predict-form">
+        {[...Array(noOfFormData)].map((x, index) => (
+          <div className="d-flex mb-5" key={index}>
+            {Object.keys(formData).map((key) => {
+              return (
+                <div key={key} >
+                  <h6>{key}</h6>
+                  <div className="mr-5">
+                    <input
+                      key={`${key}${index}`}
+                      type="text"
+                      className="form-control"
+                      placeholder={key}
+                      aria-label={key}
+                      onChange={(evt) => this.onFormInputChange(evt, key, index)}
+                      value={formData[key][index] || ''}
+                      disabled={!fillFormData}
+                    />
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        ))}
+        <div className="">
+          <button
+            type="button"
+            className="btn btn-primary mr-3"
+            onClick={() => this.changeRowNumbers(noOfFormData + 1)}
+          >
+            New entry row
+          </button>
+          <button
+            type="button"
+            className="btn btn-danger mr-3"
+            disabled={noOfFormData < 2}
+            onClick={() => this.changeRowNumbers(noOfFormData - 1)}
+          >
+            Delete row
+            </button>
+          <button
+            type="button"
+            className="btn btn-success mr-3"
+            onClick={() => this.postCSVData(formData)}
+          >
+            Submit data
+            </button>
+        </div>
+      </div>
+    )
+  }
+
+  onFillFormDataClick = () => {
+    this.setState({ fillFormData: !this.state.fillFormData })
+  }
+
   render() {
-    const { isPending, predictions } = this.state;
-    console.log(predictions);
+    const { isPending, predictions, fillFormData, } = this.state;
 
     if (isPending) {
       return (
@@ -81,15 +163,27 @@ export default class Predict extends React.Component {
                 onChange={this.onImportCSVClick}
               />
             </button>
-          </div >
-        </div >
+          </div>
+        </div>
+        <div>
+          <h2 className="my-3">OR</h2>
+          <label className="d-flex align-items-center" htmlFor="fill-form-data" onClick={this.onFillFormDataClick}>
+            <input type="checkbox" name="fill-form-data" checked={fillFormData} />
+            <h5 className="ml-2">Enter your data</h5>
+          </label>
+        </div>
+        <div className="mt-3 row">
+          <div className="col">
+            {this.renderForm()}
+          </div>
+        </div>
         <div className="mt-3 row flex-column justify-content-center">
           <h1>Prediction</h1>
           <div className="col-10 mt-1 p-4 predictions">
-            {predictions}
+            {predictions.map((prediction, index) => (<div> <b>Index {index + 1}:</b> {prediction}</div>))}
           </div>
         </div>
-      </div>
+      </div >
     );
   }
 }
