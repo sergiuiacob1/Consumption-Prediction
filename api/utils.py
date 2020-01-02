@@ -7,7 +7,10 @@ y_column = 'Consumption_MW'
 
 def build_json_response(data, success=True, status_code=200):
     """Makes a Flask response with a JSON encoded body"""
-    response = jsonify(data)
-    response.success = success
+    response = {
+        "success": success,
+        "data": data,
+    }
+    response = jsonify(response)
     response.status_code = status_code
     return response
