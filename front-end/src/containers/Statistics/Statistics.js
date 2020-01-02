@@ -1,4 +1,5 @@
 import React from 'react';
+import { Container, Row, Col } from 'react-bootstrap';
 
 export default class Statistics extends React.Component {
   constructor() {
@@ -6,11 +7,16 @@ export default class Statistics extends React.Component {
     this.state = {
     };
   }
+  
   render() {
     return (
-      <div>
-        PULA
-      </div>
+      <Container>
+        <Row>
+          <Col>
+            <div>PULA</div>
+          </Col>
+        </Row>
+      </Container>
     );
   }
 }
