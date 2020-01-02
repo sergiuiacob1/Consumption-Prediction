@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Switch, BrowserRouter } from 'react-router-dom';
+import { Route, Switch, BrowserRouter, Redirect } from 'react-router-dom';
 import Statistics from './containers/Statistics/Statistics.js';
 import Navigation from './components/Navigation'
 import Model from './containers/Model';
@@ -18,7 +18,7 @@ class App extends React.Component {
       <BrowserRouter history="">
         <Route component={Navigation}/>
         <Switch>
-          <Route exact path="/" component={Statistics}/>
+          <Route exact path="/"><Redirect to="/statistics"/></Route>
           <Route exact path="/statistics" component={Statistics}/>
           <Route exact path="/model" component={Model}/>
           <Route exact path="/predict" component={Predict}/>

@@ -1,6 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom'
-import { Container, Row, Col, Nav } from 'react-bootstrap';
+import { NavLink } from 'react-router-dom'
 import './Navigation.scss';
 
 export default class Navigation extends React.Component {
@@ -11,29 +10,23 @@ export default class Navigation extends React.Component {
 
   render() {
     return (
-      <Container>
-        <Row>
-          <Col>
-            <Nav justify variant="tabs" defaultActiveKey={1}>
-              <Nav.Item>
-                <Nav.Link eventKey="1">
-                  <Link to="/statistics">Statistics</Link>
-                </Nav.Link>
-              </Nav.Item>
-              <Nav.Item>
-                <Nav.Link eventKey="2">
-                  <Link to="/model">Model</Link>
-                </Nav.Link>
-              </Nav.Item>
-              <Nav.Item>
-                <Nav.Link eventKey="3">
-                  <Link to="/predict">Predict</Link>
-                </Nav.Link>
-              </Nav.Item>
-            </Nav>
-          </Col>
-        </Row>
-      </Container>
+      <div className="container">
+        <div className="row">
+          <div className="col">
+            <ul className="nav nav-pills nav-justified">
+              <li className="nav-item active">
+                <NavLink className="nav-link" to="/statistics" activeClassName="active">Statistics</NavLink>
+              </li>
+              <li className="nav-item">
+                <NavLink className="nav-link" to="/model" activeClassName="active">Model</NavLink>
+              </li>
+              <li className="nav-item">
+                <NavLink className="nav-link" to="/predict" activeClassName="active">Predict</NavLink>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
     )
   }
 }
