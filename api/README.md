@@ -23,4 +23,10 @@ Example of POST at `api/prediction`
   "Production_MW": [100, 200, 300],
 }
 ```
-All lists must have the same length. The api route will provide a list of predictions for the data, e.g. `[312.5, 400.7, 512]`
+All lists must have the same length. The api route will return a json of type:
+```
+{
+  "success": True,
+  "data": [312.5, 400.7, 512]
+ }
+```
