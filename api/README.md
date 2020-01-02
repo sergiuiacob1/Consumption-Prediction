@@ -7,9 +7,9 @@ Fetching at `api/models` will return a json with information about the existing 
 # Training
 Coming soon...
 
-# Prediction
+# Predict
 ## POST request
-Example of POST at `api/prediction`
+Example of POST at `api/predict`
 ```
 {
   "Date": [100, 200, 300],
