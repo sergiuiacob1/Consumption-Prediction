@@ -1,5 +1,4 @@
 import React from 'react';
-import Layout from '../../components/Layout';
 export default class Predict extends React.Component {
   constructor() {
     super();
@@ -7,10 +6,8 @@ export default class Predict extends React.Component {
     };
   }
   render() {
-      return (
-        <Layout>
-          <div>Predict</div>
-        </Layout>
-      )
+    return (
+      <div>CUR</div>
+    );
   }
 }
