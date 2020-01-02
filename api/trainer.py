@@ -64,8 +64,12 @@ class Trainer(Resource):
         data = get_train_data()
 
         model = MLPRegressor(**train_parameters, verbose=True)
+        # This data object may contain additional columns to Utils.X_original_columns
+        X_columns = list(data.columns)
+        y_column = Utils.y_column
+        X_columns.remove(y_column)
         X_train, X_test, y_train, y_test = train_test_split(
-            data[Utils.X_columns], data[Utils.y_column], test_size=0.10, random_state=42)
+            data[X_columns], data[y_column], test_size=0.10, random_state=42)
 
         print('Training model...')
         try:

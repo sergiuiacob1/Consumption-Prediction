@@ -34,4 +34,5 @@ class Server:
         self.api.add_resource(Prediction, '/predict')
 
     def run(self):
-        self.app.run(port=Server.port)
+        # TODO change when ready for deployment
+        self.app.run(port=Server.port, debug=True)
