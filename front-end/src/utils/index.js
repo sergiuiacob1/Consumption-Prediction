@@ -1,0 +1,1 @@
+export { default as fetchService } from './service';

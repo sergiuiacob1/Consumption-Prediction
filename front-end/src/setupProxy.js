@@ -1,12 +1,14 @@
 const proxy = require('http-proxy-middleware');
 
-module.exports = function(app) {
+module.exports = function (app) {
+  const API_URL = 'https://90766ec6.ngrok.io';
+
   app.use('/api', proxy({
-    target: 'https://90766ec6.ngrok.io',
+    target: API_URL,
     changeOrigin: true,
     onProxyReq(proxyReq) {
       if (proxyReq.getHeader('origin')) {
-        proxyReq.setHeader('origin', 'https://90766ec6.ngrok.io')
+        proxyReq.setHeader('origin', API_URL)
       }
     },
     pathRewrite: { '^/api': '' },
