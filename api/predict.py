@@ -42,7 +42,7 @@ class Prediction(Resource):
 
     def data_is_valid(self, df):
         """`df` is a `pandas.DataFrame` object. Makes sure there are no NaN's in the DataFrame"""
-        if df.isnull().values.any():
+        if df.isnull().values.any() or len(df) == 0:
             return False
         return True
 

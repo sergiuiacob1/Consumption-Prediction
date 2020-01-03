@@ -23,6 +23,8 @@ def get_last_model_number():
         return 1
     files = [x for x in files if x.endswith('.pkl')]
     numbers = [int(x.split('_')[1].split('.pkl')[0]) for x in files]
+    if len(numbers) == 0:
+        return 1
     return max(numbers)
 
 
@@ -70,14 +72,14 @@ class Trainer(Resource):
         X_train, X_test, y_train, y_test = train_test_split(
             data[X_columns], data[y_column], test_size=0.10)
 
-        # xg_trn_data = xgb.DMatrix(X_train, y_train)
-        # xg_vld_data = xgb.DMatrix(X_test, y_test)
-        # num_round = 50  # value used only for commiting the kernel fast
-        # xgb_param = {"objective": "reg:squarederror" if xgb.__version__ > '0.82' else 'reg:linear',
-        #              'eta': 0.1, 'booster': 'gbtree', 'max_depth': 8, 'min_child_weight': 10, 'gamma': 5, 'subsample': 0.75,
-        #              'colsample_bytree': 1, 'lambda': 10}
-        # watchlist = [(xg_trn_data, "train"), (xg_vld_data, "valid")]
-        # bst = xgb.train(xgb_param, xg_trn_data, num_round, watchlist)
+        xg_trn_data = xgb.DMatrix(X_train, y_train)
+        xg_vld_data = xgb.DMatrix(X_test, y_test)
+        num_round = 50  # value used only for commiting the kernel fast
+        xgb_param = {"objective": "reg:squarederror" if xgb.__version__ > '0.82' else 'reg:linear',
+                     'eta': 0.1, 'booster': 'gbtree', 'max_depth': 8, 'min_child_weight': 10, 'gamma': 5, 'subsample': 0.75,
+                     'colsample_bytree': 1, 'lambda': 10}
+        watchlist = [(xg_trn_data, "train"), (xg_vld_data, "valid")]
+        bst = xgb.train(xgb_param, xg_trn_data, num_round, watchlist)
 
         # params = {
         #     'boosting_type': 'gbdt',
