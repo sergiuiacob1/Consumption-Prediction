@@ -1,6 +1,7 @@
 from http.server import HTTPServer
 from flask import Flask, request
 from flask_restful import Api
+from flask_cors import CORS
 import json
 import numpy as np
 
@@ -24,6 +25,8 @@ class Server:
 
     def __init__(self):
         self.app = Flask(__name__)
+        cors = CORS(self.app)
+        self.app.config['CORS_HEADERS'] = 'Content-Type'
         # the instruction below defines how the flask responses will be encoded
         # necessary because numpy arrays aren't directly JSON serializable
         self.app.json_encoder = CustomJSONEncoder

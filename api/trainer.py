@@ -1,4 +1,4 @@
-from flask_restful import Resource, reqparse
+from flask_restful import Resource, request
 from flask import json
 import threading
 import pandas as pd
@@ -8,8 +8,12 @@ from sklearn.model_selection import train_test_split
 import joblib
 import os
 import utils as Utils
-from data_processing import get_train_data, get_test_data
+from data_processing import get_train_data
 from config import trained_models_dir_path
+
+# TODO
+# import lightgbm as lgb
+import xgboost as xgb
 
 
 def get_last_model_number():
@@ -39,27 +43,22 @@ class Trainer(Resource):
         "warm_start": bool,
     }
 
-    def __init__(self):
-        self.parser = reqparse.RequestParser()
-        for x in Trainer.allowed_train_parameters:
-            if x is 'hidden_layer_sizes':
-                action = 'append'
-            else:
-                action = None
-            self.parser.add_argument(
-                x, type=Trainer.allowed_train_parameters[x], action=action)
-
     def post(self):
-        kwargs = self.parser.parse_args()
-        kwargs = {k: v for k, v in kwargs.items() if v is not None}
-        t = threading.Thread(target=self.train, kwargs=kwargs)
+        train_parameters = request.get_json(force=True)
+        train_parameters = self.filter_train_parameters(train_parameters)
+        t = threading.Thread(target=self.train, kwargs=train_parameters)
         t.start()
         response = Utils.build_json_response(
-            f'Training model with: {kwargs}')
+            f'Training model with: {train_parameters}')
         return response
 
+    def filter_train_parameters(self, train_parameters):
+        train_parameters = {k: v for k, v in train_parameters.items()
+                            if k in Trainer.allowed_train_parameters and type(v) == Trainer.allowed_train_parameters[k]}
+        return train_parameters
+
     def train(self, **train_parameters):
-        print(f'Training new model with eta: {train_parameters}')
+        print(f'Training new model with: {train_parameters}')
         print('Loading data...')
         data = get_train_data()
 
@@ -69,7 +68,38 @@ class Trainer(Resource):
         y_column = Utils.y_column
         X_columns.remove(y_column)
         X_train, X_test, y_train, y_test = train_test_split(
-            data[X_columns], data[y_column], test_size=0.10, random_state=42)
+            data[X_columns], data[y_column], test_size=0.10)
+
+        # xg_trn_data = xgb.DMatrix(X_train, y_train)
+        # xg_vld_data = xgb.DMatrix(X_test, y_test)
+        # num_round = 50  # value used only for commiting the kernel fast
+        # xgb_param = {"objective": "reg:squarederror" if xgb.__version__ > '0.82' else 'reg:linear',
+        #              'eta': 0.1, 'booster': 'gbtree', 'max_depth': 8, 'min_child_weight': 10, 'gamma': 5, 'subsample': 0.75,
+        #              'colsample_bytree': 1, 'lambda': 10}
+        # watchlist = [(xg_trn_data, "train"), (xg_vld_data, "valid")]
+        # bst = xgb.train(xgb_param, xg_trn_data, num_round, watchlist)
+
+        # params = {
+        #     'boosting_type': 'gbdt',
+        #     'objective': 'root_mean_squared_error',
+        #     'metric': 'l2_root',
+        #     'num_leaves': 31,
+        #     'learning_rate': 0.05,
+        #     'feature_fraction': 0.9,
+        #     'bagging_fraction': 0.8,
+        #     'bagging_freq': 5,
+        #     'verbose': 0
+        # }
+
+        # lgb_train_data = lgb.Dataset(X_train, y_train)
+        # lgb_valid_data = lgb.Dataset(X_test, y_test)
+        # gbm = lgb.train(params,
+        #                 lgb_train_data,
+        #                 num_boost_round=300,  # initial value used 60000
+        #                 valid_sets=lgb_valid_data,
+        #                 early_stopping_rounds=5)
+
+        # return
 
         print('Training model...')
         try:

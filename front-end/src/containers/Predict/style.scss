@@ -1,9 +1,10 @@
 .predict{
   .predictions{
-    min-height: 300px;
-    max-height: 300px;
-    overflow-x: hidden;
     border: 1px red dotted;
-    word-break: break-all;
+  }
+  .predict-form{
+    .form-control{
+      width: 100px;
+    }
   }
 }
