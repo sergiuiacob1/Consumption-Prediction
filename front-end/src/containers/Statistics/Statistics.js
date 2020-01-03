@@ -8,21 +8,12 @@ export default class Statistics extends React.Component {
     };
   }
 
-  componentDidMount() {
-    fetch('/api/models')
-      .then(res => res.json())
-      .then(res => {
-        console.log(res);
-      })
-  }
-  
-
   render() {
     return (
       <Container>
         <Row>
           <Col>
-            <div>PULA</div>
+            <div>To do</div>
           </Col>
         </Row>
       </Container>
