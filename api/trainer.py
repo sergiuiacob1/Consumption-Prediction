@@ -1,10 +1,6 @@
 from flask_restful import Resource, request
 from flask import json
 import threading
-import pandas as pd
-from sklearn.neural_network import MLPRegressor
-from sklearn.metrics import mean_squared_error
-from sklearn.model_selection import train_test_split
 import joblib
 import time
 import os
@@ -12,7 +8,6 @@ import utils as Utils
 from data_processing import get_train_data
 from config import trained_models_dir_path
 
-# TODO delete libraries i don't use
 import xgboost as xgb
 
 from keras.models import Sequential
@@ -22,6 +17,7 @@ from keras import optimizers, regularizers, initializers
 
 def get_last_model_number():
     path = os.path.join(os.getcwd(), trained_models_dir_path)
+    os.makedirs(path, exist_ok=True)
     files = os.listdir(path)
     if len(files) == 0:
         return 0
@@ -128,10 +124,6 @@ class Trainer(Resource):
                 model, train_parameters, score, time.time() - start_time)
             print(f'Training took {time.time() - start_time} seconds')
 
-        # evaluate the keras model
-        # loss = model.evaluate(X_test.values, y_test.values)
-        # print('Accuracy: %.2f' % (loss*100))
-        return
         # xg_trn_data = xgb.DMatrix(X_train, y_train)
         # xg_vld_data = xgb.DMatrix(X_test, y_test)
         # num_round = 50  # value used only for commiting the kernel fast
@@ -141,33 +133,6 @@ class Trainer(Resource):
         # watchlist = [(xg_trn_data, "train"), (xg_vld_data, "valid")]
         # bst = xgb.train(xgb_param, xg_trn_data, num_round, watchlist)
         # return
-
-        model = MLPRegressor(**train_parameters, verbose=True)
-        # This data object may contain additional columns to Utils.X_original_columns
-        X_columns = list(data.columns)
-        y_column = Utils.y_column
-        X_columns.remove(y_column)
-        X_train, X_test, y_train, y_test = train_test_split(
-            data[X_columns], data[y_column], test_size=0.10)
-
-        print('Training model...')
-        try:
-            model.fit(X_train, y_train)
-        except Exception as e:
-            print(
-                f'Could not train model with {train_parameters}.\nError: {e}')
-        else:
-            # if training the model succedeed
-            score = self.evaluate_model(model, X_test, y_test)
-            print(f'Model score: {score}')
-            self.save_trained_model(model, train_parameters, score)
-            print('Training done')
-
-    def evaluate_model(self, model, X, y):
-        """Returns the Mean Squared Error for the test data"""
-        y_pred = model.predict(X)
-        score = mean_squared_error(y, y_pred)
-        return score
 
     def save_trained_model(self, model, train_parameters, score, training_time):
         print('Saving model...')
