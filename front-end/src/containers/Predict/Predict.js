@@ -1,8 +1,9 @@
 import React from 'react';
 import csvParser from 'papaparse';
-import { fetchService } from '../../utils';
+import { fetchService, utils } from '../../utils';
 import { Spinner } from 'react-bootstrap';
 import './Predict.scss';
+
 
 export default class Predict extends React.Component {
   constructor() {
@@ -53,7 +54,6 @@ export default class Predict extends React.Component {
         this.setState({ isPending: false, predictions });
       })
       .catch((error) => {
-        debugger
         if (!error.success) {
           alert(error.data);
         }
@@ -65,7 +65,7 @@ export default class Predict extends React.Component {
     const reader = new FileReader();
     reader.onload = (_evt) => {
       const parsedCSV = csvParser.parse(_evt.target.result);
-      const predictModelData = this.parseCSVData(parsedCSV);
+      const predictModelData = utils.parseCSVData(parsedCSV);
 
       if (parsedCSV.errors.length) {
         alert("CSV ERRORS");
