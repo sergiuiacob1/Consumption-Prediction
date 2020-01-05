@@ -68,7 +68,7 @@ class Prediction(Resource):
             model_info_path = os.path.join(path, x)
             with open(model_info_path, 'r') as f:
                 data = json.load(f)
-            if data['mse_score'] < min_score:
+            if data['mse_score'][-1] < min_score:
                 min_score = data['mse_score']
                 best_model_name = x.split('.json')[0] + '.pkl'
 
