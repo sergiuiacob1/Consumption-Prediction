@@ -1,7 +1,8 @@
 const proxy = require('http-proxy-middleware');
 
 module.exports = function (app) {
-  const API_URL = 'https://90766ec6.ngrok.io';
+  const API_URL = 'http://45543eed.ngrok.io';
+  // const API_URL = 'http://localhost:3001';
 
   app.use('/api', proxy({
     target: API_URL,
