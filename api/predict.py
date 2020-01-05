@@ -7,7 +7,7 @@ import json
 import utils as Utils
 from config import trained_models_dir_path
 from data_processing import process_data
-
+import keras
 
 class Prediction(Resource):
     def post(self):
@@ -18,8 +18,6 @@ class Prediction(Resource):
             # drop rows that are all null
             X.dropna(how='all', inplace=True)
             if self.data_is_valid(X):
-                # TODO data has to be processed here
-                # temporarily dropping the Date column
                 X = process_data(X)
                 print(f'Predicting \n{X}')
                 predictions = self.get_prediction(X.values)
@@ -73,9 +71,11 @@ class Prediction(Resource):
                 best_model_name = x.split('.json')[0] + '.pkl'
 
         try:
+            keras.backend.clear_session()
             model = joblib.load(os.path.join(path, best_model_name))
             print(f'Model chosen was {best_model_name}')
         except Exception as e:
-            print(f'Could not load model {best_model_name}')
+            print(f'Could not load model {best_model_name}: {str(e)}')
+            return None
 
         return model

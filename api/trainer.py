@@ -7,6 +7,7 @@ import os
 import utils as Utils
 from data_processing import get_train_data
 from config import trained_models_dir_path
+import ast
 
 import xgboost as xgb
 
@@ -59,12 +60,22 @@ class Trainer(Resource):
                             if k in Trainer.allowed_train_parameters and type(v) == Trainer.allowed_train_parameters[k]}
         no_layers = len(train_parameters["hidden_layer_sizes"])
         # make sure all lists have the same length
-        train_parameters["layer_activations"] = train_parameters["layer_activations"] + [
-            "relu"] * (no_layers - len(train_parameters["layer_activations"]))
-        train_parameters["layer_dropout_values"] = train_parameters["layer_dropout_values"] + [
-            0] * (no_layers - len(train_parameters["layer_dropout_values"]))
-        train_parameters["weight_initializers"] = train_parameters["weight_initializers"] + [
-            "glorot_normal"] * (no_layers - len(train_parameters["weight_initializers"]))
+        for x in Trainer.allowed_train_parameters:
+            if type(x) is not list:
+                continue
+            if x not in train_parameters:
+                train_parameters[x] = []
+        train_parameters["layer_activations"].extend(
+            ["relu"] * (no_layers - len(train_parameters["layer_activations"])))
+        train_parameters["layer_dropout_values"].extend(
+            [0] * (no_layers - len(train_parameters.get("layer_dropout_values", []))))
+        train_parameters["weight_initializers"].extend(
+            ["glorot_normal"] * (no_layers - len(train_parameters.get("weight_initializers", []))))
+
+        for k in ["hidden_layer_sizes", "layer_dropout_values"]:
+            train_parameters[k] = list(
+                map(lambda x: ast.literal_eval(str(x)), train_parameters[k]))
+
         return train_parameters
 
     def train(self, **train_parameters):
