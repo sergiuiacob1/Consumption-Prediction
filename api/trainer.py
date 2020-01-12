@@ -56,21 +56,30 @@ class Trainer(Resource):
         return response
 
     def filter_train_parameters(self, train_parameters):
-        train_parameters = {k: v for k, v in train_parameters.items()
-                            if k in Trainer.allowed_train_parameters and type(v) == Trainer.allowed_train_parameters[k]}
-        no_layers = len(train_parameters["hidden_layer_sizes"])
-        # make sure all lists have the same length
-        for x in Trainer.allowed_train_parameters:
-            if type(x) is not list:
+        # By default, 2 hidden layers
+        no_layers = len(train_parameters.get("hidden_layer_sizes", 2))
+        default_values = {
+            "layer_activations": "relu",
+            "layer_dropout_values": 0.0,
+            "weight_initializers": "glorot_uniform",
+            "hidden_layer_sizes": 100,
+        }
+        for k in train_parameters:
+            if k not in Trainer.allowed_train_parameters:
+                train_parameters[k] = None
                 continue
-            if x not in train_parameters:
-                train_parameters[x] = []
-        train_parameters["layer_activations"].extend(
-            ["relu"] * (no_layers - len(train_parameters["layer_activations"])))
-        train_parameters["layer_dropout_values"].extend(
-            [0] * (no_layers - len(train_parameters.get("layer_dropout_values", []))))
-        train_parameters["weight_initializers"].extend(
-            ["glorot_normal"] * (no_layers - len(train_parameters.get("weight_initializers", []))))
+            if Trainer.allowed_train_parameters[k] is not list:
+                # convert to the type I need
+                train_parameters[k] = Trainer.allowed_train_parameters[k](
+                    train_parameters[k])
+            else:
+                # make sure all lists have the same length as the hidden_layers_sizes parameter
+                remainder = no_layers - len(train_parameters[k])
+                if remainder < 0:
+                    train_parameters[k] = train_parameters[k][:no_layers]
+                else:
+                    train_parameters[k] = train_parameters.get(
+                        k, []) + [default_values[k]] * remainder
 
         for k in ["hidden_layer_sizes", "layer_dropout_values"]:
             train_parameters[k] = list(
