@@ -8,6 +8,7 @@ import numpy as np
 from model import Model
 from trainer import Trainer
 from predict import Prediction
+from statistics import Statistics
 
 
 class CustomJSONEncoder(json.JSONEncoder):
@@ -35,7 +36,11 @@ class Server:
         self.api.add_resource(Model, '/models')
         self.api.add_resource(Trainer, '/train')
         self.api.add_resource(Prediction, '/predict')
+        self.api.add_resource(Statistics, '/statistics')
 
     def run(self):
         # TODO change when ready for deployment
         self.app.run(port=Server.port, debug=True)
+
+x = Server()
+x.run()
