@@ -34,16 +34,17 @@ last_model_number_lock = threading.Lock()
 
 
 class Trainer(Resource):
+    # (type, default_value)
     allowed_train_parameters = {
-        "optimizer": str,
-        "learning_rate": float,
-        "learning_rate_decay": float,
-        "epochs": int,
-        "hidden_layer_sizes": list,
-        "layer_activations": list,
-        "layer_dropout_values": list,
-        "weight_initializers": list,
-        "batch_size": int,
+        "optimizer": (str, "adam"),
+        "learning_rate": (float, 0.01),
+        "learning_rate_decay": (float, 0.0000001),
+        "epochs": (int, 500),
+        "hidden_layer_sizes": (list, 100),
+        "layer_activations": (list, "relu"),
+        "layer_dropout_values": (list, 0.0),
+        "weight_initializers": (list, "glorot_uniform"),
+        "batch_size": (int, 16),
     }
 
     def post(self):
@@ -56,22 +57,37 @@ class Trainer(Resource):
         return response
 
     def filter_train_parameters(self, train_parameters):
-        train_parameters = {k: v for k, v in train_parameters.items()
-                            if k in Trainer.allowed_train_parameters and type(v) == Trainer.allowed_train_parameters[k]}
+        # By default, 2 hidden layers
+        if "hidden_layer_sizes" not in train_parameters:
+            train_parameters["hidden_layer_sizes"] = [100, 32]
         no_layers = len(train_parameters["hidden_layer_sizes"])
-        # make sure all lists have the same length
-        for x in Trainer.allowed_train_parameters:
-            if type(x) is not list:
-                continue
-            if x not in train_parameters:
-                train_parameters[x] = []
-        train_parameters["layer_activations"].extend(
-            ["relu"] * (no_layers - len(train_parameters["layer_activations"])))
-        train_parameters["layer_dropout_values"].extend(
-            [0] * (no_layers - len(train_parameters.get("layer_dropout_values", []))))
-        train_parameters["weight_initializers"].extend(
-            ["glorot_normal"] * (no_layers - len(train_parameters.get("weight_initializers", []))))
 
+        for k in Trainer.allowed_train_parameters:
+            if Trainer.allowed_train_parameters[k][0] is not list:
+                # the type isn't list
+                if k not in train_parameters:
+                    # set the default value
+                    train_parameters[k] = Trainer.allowed_train_parameters[k][1]
+                else:
+                    # convert to the type I need
+                    train_parameters[k] = Trainer.allowed_train_parameters[k][0](
+                        train_parameters[k])
+            else:
+                # this is a list
+                if k not in train_parameters:
+                    # default value
+                    train_parameters[k] = [
+                        Trainer.allowed_train_parameters[k][1]] * no_layers
+                else:
+                    # make sure all lists have the same length
+                    remainder = no_layers - len(train_parameters[k])
+                    if remainder < 0:
+                        train_parameters[k] = train_parameters[k][:no_layers]
+                    else:
+                        train_parameters[k] = train_parameters[k] + \
+                            [Trainer.allowed_train_parameters[k][1]] * remainder
+
+        # convert these to ints
         for k in ["hidden_layer_sizes", "layer_dropout_values"]:
             train_parameters[k] = list(
                 map(lambda x: ast.literal_eval(str(x)), train_parameters[k]))
@@ -96,10 +112,10 @@ class Trainer(Resource):
         model = Sequential()
         initializer = 'glorot_normal'
         my_optimizers = {
-            "sgd": optimizers.SGD(lr=train_parameters.get("learning_rate", 0.01), decay=train_parameters.get("decay", 1e-6), momentum=0.9, nesterov=True),
-            "adagrad": optimizers.Adagrad(lr=train_parameters.get("learning_rate", 0.01), decay=train_parameters.get("decay", 1e-6)),
-            "adam": optimizers.Adam(lr=train_parameters.get("learning_rate", 0.01), decay=train_parameters.get("decay", 1e-6)),
-            "rmsprop": optimizers.RMSprop(lr=train_parameters.get("learning_rate", 0.01), decay=train_parameters.get("decay", 1e-6)),
+            "sgd": optimizers.SGD(lr=train_parameters["learning_rate"], decay=train_parameters["learning_rate_decay"], momentum=0.9, nesterov=True),
+            "adagrad": optimizers.Adagrad(lr=train_parameters["learning_rate"], decay=train_parameters["learning_rate_decay"]),
+            "adam": optimizers.Adam(lr=train_parameters["learning_rate"], decay=train_parameters["learning_rate_decay"]),
+            "rmsprop": optimizers.RMSprop(lr=train_parameters["learning_rate"], decay=train_parameters["learning_rate_decay"]),
         }
 
         model = Sequential()
@@ -122,8 +138,8 @@ class Trainer(Resource):
         try:
             model.compile(loss='mean_squared_error',
                           optimizer=my_optimizers[train_parameters["optimizer"]])
-            fit_history = model.fit(data[X_columns].values, data[y_column].values, validation_split=0.1, batch_size=train_parameters.get(
-                "batch_size", 32), epochs=train_parameters.get("epochs", 500), workers=4)
+            fit_history = model.fit(data[X_columns].values, data[y_column].values, validation_split=0.1,
+                                    batch_size=train_parameters["batch_size"], epochs=train_parameters["epochs"], workers=4)
         except Exception as e:
             print(
                 f'Could not train model with {train_parameters}.\nError: {e}')

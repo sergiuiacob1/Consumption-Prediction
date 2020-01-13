@@ -9,6 +9,7 @@ from config import trained_models_dir_path
 from data_processing import process_data
 import keras
 
+
 class Prediction(Resource):
     def post(self):
         data = request.get_json(force=True)
@@ -67,7 +68,7 @@ class Prediction(Resource):
             with open(model_info_path, 'r') as f:
                 data = json.load(f)
             if data['mse_score'][-1] < min_score:
-                min_score = data['mse_score']
+                min_score = data['mse_score'][-1]
                 best_model_name = x.split('.json')[0] + '.pkl'
 
         try:
