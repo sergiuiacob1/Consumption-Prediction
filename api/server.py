@@ -6,7 +6,7 @@ import json
 import numpy as np
 
 from model import Model
-from trainer import Trainer
+# from trainer import Trainer
 from predict import Prediction
 from statistics import Statistics
 
@@ -34,7 +34,7 @@ class Server:
         self.api = Api(self.app)
 
         self.api.add_resource(Model, '/models')
-        self.api.add_resource(Trainer, '/train')
+        # self.api.add_resource(Trainer, '/train')
         self.api.add_resource(Prediction, '/predict')
         self.api.add_resource(Statistics, '/statistics')
 
