@@ -9,6 +9,8 @@ from model import Model
 # from trainer import Trainer
 from predict import Prediction
 from statistics import Statistics
+from monthly_statistics import Monthly_Statistics
+from general_statistics import General_Statistics
 
 
 class CustomJSONEncoder(json.JSONEncoder):
@@ -36,7 +38,9 @@ class Server:
         self.api.add_resource(Model, '/models')
         # self.api.add_resource(Trainer, '/train')
         self.api.add_resource(Prediction, '/predict')
-        self.api.add_resource(Statistics, '/statistics')
+        # self.api.add_resource(Statistics, '/statistics')
+        self.api.add_resource(General_Statistics, '/general_statistics')
+        self.api.add_resource(Monthly_Statistics, '/monthly_statistics')
 
     def run(self):
         # TODO change when ready for deployment

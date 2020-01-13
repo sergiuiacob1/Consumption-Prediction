@@ -6,7 +6,9 @@ y_column = 'Consumption_MW'
 
 train_file_path = '../data/train_electricity.csv'
 
-stats_cache_path = 'api_cache/stats_cache'
+monthly_stats_cache_path = 'api_cache/monthly_stats_cache'
+
+general_stats_cache_path = 'api_cache/general_stats_cache'
 
 
 def build_json_response(data, success=True, status_code=200):
