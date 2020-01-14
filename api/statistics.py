@@ -62,6 +62,8 @@ class Statistics():
         for key in keys:
             resultsDictionary = dict()
             resultsDictionary['sum'] = sum(data[key])
+            resultsDictionary['min'] = min(data[key])
+            resultsDictionary['max'] = max(data[key])
             resultsDictionary['avg'] = numpy.mean(data[key])
             resultsDictionary['data'] = self.findGoodSubset(data[key], 1000)
             resultsDictionary['stdDev'] = numpy.std(data[key])
