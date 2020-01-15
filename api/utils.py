@@ -8,12 +8,12 @@ y_column = 'Consumption_MW'
 
 def build_json_response(data, success=True, status_code=200):
     """Makes a Flask response with a JSON encoded body"""
-    if isinstance(data, np.ndarray):
-        data = data.tolist()
+    # if isinstance(data, np.ndarray):
+    #     data = data.tolist()
     response = {
         "success": success,
         "data": data,
     }
-    # response = jsonify(response)
-    # response.status_code = status_code
+    response = jsonify(response)
+    response.status_code = status_code
     return response
